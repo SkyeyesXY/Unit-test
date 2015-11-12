@@ -3,7 +3,7 @@ __author__ = 'Skyeyes'
 
 
 class Data:
-    __role = ["Common", "Soldier", "Hero"]
+    role = ["Common", "Soldier", "Hero"]
 
     class Player:
         def __init__(self, name, ATK, DEF, HP, ROLE):
@@ -37,9 +37,6 @@ class Data:
         def get_role(self):
             return self.__ROLE
 
-    def getrole(self, number):
-        return self.__role[number]
-
 
 # noinspection PyArgumentList
 class GameFlow:
@@ -54,13 +51,13 @@ class GameFlow:
         self.__atk.append(int(input("player" + str(player_num + 1) + "'s atk: ")))
         self.__def.append(int(input("player" + str(player_num + 1) + "'s def: ")))
         self.__hp.append(int(input("player" + str(player_num + 1) + "'s hp: ")))
-        self.__rolenum.append(int(input("player" + str(player_num + 1) + "'s role(1.Common  2.Soldier  3.Hero): ")))
+        self.__rolenum.append(int(input("player" + str(player_num + 1) + "'s role(1.Common  2.Soldier  3.Hero): "))-1)
 
     def create_player(self):
         self.get_input(0)
         self.get_input(1)
-        return Data.Player(self.__name[0], self.__atk[0], self.__def[0], self.__hp[0], Data.getrole(self.__rolenum[0])), \
-               Data.Player(self.__name[1], self.__atk[1], self.__def[1], self.__hp[1], Data.getrole(self.__rolenum[1]))
+        return Data.Player(self.__name[0], self.__atk[0], self.__def[0], self.__hp[0], Data.role[self.__rolenum[0]]), \
+               Data.Player(self.__name[1], self.__atk[1], self.__def[1], self.__hp[1], Data.role[self.__rolenum[1]])
 
 
 class View:
