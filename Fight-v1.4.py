@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Skyeyes'
 
-
 class Player:
-    def __init__(self, name="", atk=0, defence=0, hp=0, role="", weapon="", weaponatk=0):
+    def __init__(self, name="", atk=0, defence=0, hp=0, role="", weapon="", weaponatk=0, shield=0):
         self.__name = name
         self.__atk = atk
         self.__def = defence
-        self.__hp = hp
-        # self.__hpcopy = self.__hp = hp
+        self.__hpcopy = self.__hp = hp
         self.__role = role
         self.__weapon = weapon
         self.__weaponatk = weaponatk
+        self.__shield = shield
 
     def get_hurt(self, other_atk, otherweaponatk):
-        hurt = max(other_atk + otherweaponatk - self.__def, 0)
+        hurt = max(other_atk + otherweaponatk - self.__def - self.__shield, 0)
         hurt = min(hurt, self.__hp)
         return hurt
 
@@ -55,6 +54,7 @@ class View:
     role = ""
     weapon = ""
     weapomatk = 0
+    shield = 0
     player1 = Player()
     player2 = Player()
 
@@ -68,12 +68,15 @@ class View:
             self.weapon = input("player" + str(player_num + 1) + "'s weapon is(if don't need weapon input 'n'): ")
             if self.weapon != "n":
                 self.weapomatk = int(input("player" + str(player_num + 1) + "'s weaponapk is: "))
+            choose_shield = input("do you need a shield(y/n): ")
+            if choose_shield == "y":
+                self.shield = int(input("you shield's def is: "))
         else:
             self.weapomatk = 0
 
 
     def print_template(self, player_1, player_2):
-        hurt = player_2.hp_lose(player_1.get_atk(), player_1.get_weaponatk())  #根据伤害等判断输出
+        hurt = player_2.hp_lose(player_1.get_atk(), player_1.get_weaponatk())
         if hurt == 0:
             print(player_1.get_name() + " can't hurt " + player_2.get_name())
         elif player_1.get_role() == "n":
@@ -110,12 +113,11 @@ class View:
 
 def Game(View):
     View.get_input(0)
-    View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk)
+    View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk, View.shield)
     View.get_input(1)
-    View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk)
+    View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk, View.shield)
     hpcopy1 = View.player1.get_hp()         #记录预执行前的血量
     hpcopy2 = View.player2.get_hp()
-    #记录游戏过程，记录是否平局，记录输出顺序，相当于预执行
     if View.player1.get_hurt(View.player2.get_atk(), View.player1.get_weaponatk()) == 0 and View.player2.get_hurt(View.player1.get_atk(), View.player1.get_weaponatk()) == 0:
             View.draw = True  # draw：平局
     else:
@@ -136,6 +138,7 @@ def Game(View):
             flag += 1
     View.player1.reply_hp(hpcopy1)
     View.player2.reply_hp(hpcopy2)
+
 
 
 def main():
