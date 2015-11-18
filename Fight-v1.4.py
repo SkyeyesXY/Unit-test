@@ -2,18 +2,11 @@
 __author__ = 'Skyeyes'
 
 class Player:
-    def __init__(self, name="", atk=0, defence=0, hp=0, role="", weapon="", weaponatk=0, shield=0):
-        self.__name = name
-        self.__atk = atk
-        self.__def = defence
-        self.__hpcopy = self.__hp = hp
-        self.__role = role
-        self.__weapon = weapon
-        self.__weaponatk = weaponatk
-        self.__shield = shield
+    def __init__(self, args):
+        self.__name, self.__atk, self.__def, self.__hp, self.__role, self.__weapon, self.__weaponatk, self.__shield = args
 
     def get_hurt(self, other_atk, otherweaponatk):
-        hurt = max(other_atk + otherweaponatk - self.__def - self.__shield, 0)
+        hurt = max(other_atk + otherweaponatk - self.__def - int(self.__shield), 0)
         hurt = min(hurt, self.__hp)
         return hurt
 
@@ -47,32 +40,31 @@ class Player:
 class View:
     outputtable = []  # 输出表，记录玩家的输出顺序
     draw = False
-    name = ""
-    atk = 0
-    defence = 0
-    hp = 0
-    role = ""
-    weapon = ""
-    weaponatk = 0
-    shield = 0
-    player1 = Player()
-    player2 = Player()
+    player1 = 0
+    player2 = 0
 
     def get_input(self, player_num):
-        self.name = input("player" + str(player_num + 1) + "'s name: ")
-        self.atk = int(input("player" + str(player_num + 1) + "'s atk: "))
-        self.defence = int(input("player" + str(player_num + 1) + "'s def: "))
-        self.hp = int(input("player" + str(player_num + 1) + "'s hp: "))
-        self.role = input("player" + str(player_num + 1) + "'s role(no role input 'n'): ")
-        if self.role != "n":
-            self.weapon = input("player" + str(player_num + 1) + "'s weapon is(if don't need weapon input 'n'): ")
-            if self.weapon != "n":
-                self.weaponatk = int(input("player" + str(player_num + 1) + "'s weaponapk is: "))
+        name = input("player" + str(player_num ) + "'s name: ")
+        atk = int(input("player" + str(player_num ) + "'s atk: "))
+        defence = int(input("player" + str(player_num) + "'s def: "))
+        hp = int(input("player" + str(player_num) + "'s hp: "))
+        role = input("player" + str(player_num) + "'s role(no role input 'n'): ")
+        if role != "n":
+            weapon = input("player" + str(player_num) + "'s weapon is(if don't need weapon input 'n'): ")
+            if weapon != "n":
+                weaponatk = int(input("player" + str(player_num) + "'s weaponapk is: "))
+            else:
+                weaponatk = "n"
             choose_shield = input("do you need a shield(y/n): ")
             if choose_shield == "y":
-                self.shield = int(input("you shield's def is: "))
+                shield = int(input("you shield's def is: "))
+            else:
+                shield = 0
         else:
-            self.weaponatk = 0
+            weaponatk = 0
+            weapon = "n"
+            shield = 0
+        return name, atk, defence, hp, role, weapon, weaponatk, shield
 
 
     def print_template(self, player_1, player_2):
@@ -113,37 +105,35 @@ class View:
 
 class Game:
 
-    def control(self, View):        #创造玩家，进行输出顺序判断的游戏过程控制
-        View.get_input(0)
-        View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weaponatk, View.shield)
-        View.get_input(1)
-        View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weaponatk, View.shield)
-        hpcopy1 = View.player1.get_hp()         #记录预执行前的血量
-        hpcopy2 = View.player2.get_hp()
-        if View.player1.get_hurt(View.player2.get_atk(), View.player1.get_weaponatk()) == 0 and View.player2.get_hurt(View.player1.get_atk(), View.player1.get_weaponatk()) == 0:
-                View.draw = True  # draw：平局
+    def control(self, view):        #创造玩家，进行输出顺序判断的游戏过程控制
+        View.player1 = Player((view.get_input(0)))
+        View.player2 = Player((view.get_input(1)))
+        hpcopy1 = view.player1.get_hp()         #记录预执行前的血量
+        hpcopy2 = view.player2.get_hp()
+        if view.player1.get_hurt(view.player2.get_atk(), view.player1.get_weaponatk()) == 0 and view.player2.get_hurt(view.player1.get_atk(), view.player1.get_weaponatk()) == 0:
+                view.draw = True  # draw：平局
         else:
             flag = 0#判断输出顺序的标记
             while True:
                 if flag % 2 == 0:
-                    View.player2.hp_lose(View.player1.get_atk(), View.player1.get_weaponatk())
-                    View.outputtable.append(1)  # 轮到玩家1输出则输出表记录1
-                    if View.player2.get_hp() == 0:
-                        View.outputtable.append(3)  # 若玩家1胜利记录3
+                    view.player2.hp_lose(view.player1.get_atk(), view.player1.get_weaponatk())
+                    view.outputtable.append(1)  # 轮到玩家1输出则输出表记录1
+                    if view.player2.get_hp() == 0:
+                        view.outputtable.append(3)  # 若玩家1胜利记录3
                         break
                 else:
-                    View.player1.hp_lose(View.player2.get_atk(), View.player2.get_weaponatk())
-                    View.outputtable.append(2)  # 轮到玩家2输出则输出表记录2
-                    if View.player1.get_hp() == 0:
-                        View.outputtable.append(4)  # 若玩家2胜利记录4
+                    view.player1.hp_lose(view.player2.get_atk(), view.player2.get_weaponatk())
+                    view.outputtable.append(2)  # 轮到玩家2输出则输出表记录2
+                    if view.player1.get_hp() == 0:
+                        view.outputtable.append(4)  # 若玩家2胜利记录4
                         break
                 flag += 1
-        View.player1.reply_hp(hpcopy1)
-        View.player2.reply_hp(hpcopy2)
+        view.player1.reply_hp(hpcopy1)
+        view.player2.reply_hp(hpcopy2)
 
-    def start(self, View):
-        self.control(View)
-        View.game_print()
+    def start(self, view):
+        self.control(view)
+        view.game_print()
 
 
 
