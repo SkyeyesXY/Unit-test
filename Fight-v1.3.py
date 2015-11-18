@@ -107,40 +107,41 @@ class View:
                     print(self.player2.get_name() + " win!")
 
 
+class Control:
 
-def Game(View):
-    View.get_input(0)
-    View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk)
-    View.get_input(1)
-    View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk)
-    hpcopy1 = View.player1.get_hp()         #记录预执行前的血量
-    hpcopy2 = View.player2.get_hp()
-    #记录游戏过程，记录是否平局，记录输出顺序，相当于预执行
-    if View.player1.get_hurt(View.player2.get_atk(), View.player1.get_weaponatk()) == 0 and View.player2.get_hurt(View.player1.get_atk(), View.player1.get_weaponatk()) == 0:
-            View.draw = True  # draw：平局
-    else:
-        flag = 0#判断输出顺序的标记
-        while True:
-            if flag % 2 == 0:
-                View.player2.hp_lose(View.player1.get_atk(), View.player1.get_weaponatk())
-                View.outputtable.append(1)  # 轮到玩家1输出则输出表记录1
-                if View.player2.get_hp() == 0:
-                    View.outputtable.append(3)  # 若玩家1胜利记录3
-                    break
-            else:
-                View.player1.hp_lose(View.player2.get_atk(), View.player2.get_weaponatk())
-                View.outputtable.append(2)  # 轮到玩家2输出则输出表记录2
-                if View.player1.get_hp() == 0:
-                    View.outputtable.append(4)  # 若玩家2胜利记录4
-                    break
-            flag += 1
-    View.player1.reply_hp(hpcopy1)
-    View.player2.reply_hp(hpcopy2)
+    def Game(self, View):
+        View.get_input(0)
+        View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk)
+        View.get_input(1)
+        View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk)
+        hpcopy1 = View.player1.get_hp()         #记录预执行前的血量
+        hpcopy2 = View.player2.get_hp()
+        #记录游戏过程，记录是否平局，记录输出顺序，相当于预执行
+        if View.player1.get_hurt(View.player2.get_atk(), View.player1.get_weaponatk()) == 0 and View.player2.get_hurt(View.player1.get_atk(), View.player1.get_weaponatk()) == 0:
+                View.draw = True  # draw：平局
+        else:
+            flag = 0#判断输出顺序的标记
+            while True:
+                if flag % 2 == 0:
+                    View.player2.hp_lose(View.player1.get_atk(), View.player1.get_weaponatk())
+                    View.outputtable.append(1)  # 轮到玩家1输出则输出表记录1
+                    if View.player2.get_hp() == 0:
+                        View.outputtable.append(3)  # 若玩家1胜利记录3
+                        break
+                else:
+                    View.player1.hp_lose(View.player2.get_atk(), View.player2.get_weaponatk())
+                    View.outputtable.append(2)  # 轮到玩家2输出则输出表记录2
+                    if View.player1.get_hp() == 0:
+                        View.outputtable.append(4)  # 若玩家2胜利记录4
+                        break
+                flag += 1
+        View.player1.reply_hp(hpcopy1)
+        View.player2.reply_hp(hpcopy2)
 
 
 def main():
     view = View()
-    Game(view)
+    Control().Game(view)
     view.game_print()
 
 
