@@ -77,7 +77,7 @@ class View:
 
     def print_template(self, player_1, player_2):
         hurt = player_2.hp_lose(player_1.get_atk(), player_1.get_weaponatk())
-        if hurt == 0:
+        if hurt == 0:                   #这只是对输出的模板的判断和游戏过程并没有联系，不是所有的判断都叫过程判断
             print(player_1.get_name() + " can't hurt " + player_2.get_name())
         elif player_1.get_role() == "n":
             print(player_1.get_name() + " attack " + player_2.get_name() + ", " +
@@ -111,13 +111,13 @@ class View:
 
 
 
-class Control:
+class Game:
 
-    def Game(self, View):
+    def control(self, View):        #创造玩家，进行输出顺序判断的游戏过程控制
         View.get_input(0)
-        View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk, View.shield)
+        View.player1 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weaponatk, View.shield)
         View.get_input(1)
-        View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weapomatk, View.shield)
+        View.player2 = Player(View.name, View.atk, View.defence, View.hp, View.role, View.weapon, View.weaponatk, View.shield)
         hpcopy1 = View.player1.get_hp()         #记录预执行前的血量
         hpcopy2 = View.player2.get_hp()
         if View.player1.get_hurt(View.player2.get_atk(), View.player1.get_weaponatk()) == 0 and View.player2.get_hurt(View.player1.get_atk(), View.player1.get_weaponatk()) == 0:
@@ -141,12 +141,15 @@ class Control:
         View.player1.reply_hp(hpcopy1)
         View.player2.reply_hp(hpcopy2)
 
+    def start(self, View):
+        self.control(View)
+        View.game_print()
+
 
 
 def main():
     view = View()
-    Control().Game(view)
-    view.game_print()
+    Game().start(view)
 
 
 if __name__ == "__main__":
